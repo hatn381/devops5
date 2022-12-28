@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        GIT_URL = ''
+        GIT_URL = 'https://github.com/hatn381/devops5.git'
         WORKSPACE = 'SOURCE_CODE'
-        AWS_ACCOUNT_ID=""
+        AWS_ACCOUNT_ID="523411581086"
         AWS_DEFAULT_REGION="us-east-1" 
         IMAGE_TAG="latest"
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
@@ -28,7 +28,7 @@ pipeline {
                             [$class: 'RelativeTargetDirectory',
                             relativeTargetDir: "${WORKSPACE}"]],
                 submoduleCfg: [],
-                userRemoteConfigs: [[credentialsId: 'hatn5_github', url: "${GIT_URL}"]]
+                userRemoteConfigs: [[credentialsId: 'hatn5_github_credentials', url: "${GIT_URL}"]]
                 ])
             }
         }

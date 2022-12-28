@@ -1,0 +1,71 @@
+pipeline {
+    agent any
+    environment {
+        GIT_URL = ''
+        WORKSPACE = 'SOURCE_CODE'
+        AWS_ACCOUNT_ID=""
+        AWS_DEFAULT_REGION="us-east-1" 
+        IMAGE_TAG="latest"
+        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+    }
+    parameters {
+        string(name: 'BRANCH_BUILD', defaultValue: 'staging', description: 'The branch of git')
+        string(name: 'BUILD_SERVICES', defaultValue: '', description: 'List of build services')
+    }
+    stages{
+        stage('Checkout'){
+            steps{
+                checkout([   $class: 'GitSCM',
+                branches: [[name: "${BRANCH_BUILD}"]],
+                doGenerateSubmoduleConfigurations: false,
+                extensions: [[$class: 'CleanBeforeCheckout'],
+                            [$class: 'SubmoduleOption',
+                            disableSubmodules: false,
+                            parentCredentials: true,
+                            recursiveSubmodules: true,
+                            reference: '',
+                            trackingSubmodules: false],
+                            [$class: 'RelativeTargetDirectory',
+                            relativeTargetDir: "${WORKSPACE}"]],
+                submoduleCfg: [],
+                userRemoteConfigs: [[credentialsId: 'hatn5_github', url: "${GIT_URL}"]]
+                ])
+            }
+        }
+        stage('Login into AWS ECR') {
+            steps {
+                sh "aws configure list"
+                sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"  
+            }
+        }
+        stage('Build Cloud Config Server'){
+            when{
+                expression {
+                    return "${BUILD_SERVICES}".contains("frontend-service")
+                }
+            }
+            environment {
+                IMAGE_REPO_NAME="frontend-repo"
+            }
+            steps{
+                // Build docker image
+                sh "cd ${WORKSPACE} && docker build -t ${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG} ."
+                // Tag docker image
+                sh "docker tag ${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG} ${REPOSITORY_URI}/${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG}"
+                // Push image to ECR repository
+                sh "docker push ${REPOSITORY_URI}/${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG}"
+            }
+        }
+        // stage('Delete docker images') {
+        //     steps {
+        //         /* groovylint-disable-next-line NglParseError */
+        //         sh "docker rmi -f \$(docker images -aq)"
+        //     }
+        // }
+    }
+    post {
+        always {
+            deleteDir() /* clean up our workspace */
+        }
+    }
+}

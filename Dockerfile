@@ -4,11 +4,11 @@ FROM node:16 AS build-stage
 WORKDIR /app
 
 # Install app dependencies
-COPY package*.json .
+COPY package*.json ./
 RUN npm install
 
 # Copy source
-COPY . .
+COPY . ./
 
 RUN npm run build
 

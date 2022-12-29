@@ -39,7 +39,7 @@ pipeline {
                 sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"  
             }
         }
-        stage('Build Cloud Config Server'){
+        stage('Build frontend service'){
             when{
                 expression {
                     return "${BUILD_SERVICES}".contains("frontend-service")
@@ -57,12 +57,6 @@ pipeline {
                 sh "sudo docker push ${REPOSITORY_URI}/${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG}"
             }
         }
-        // stage('Delete docker images') {
-        //     steps {
-        //         /* groovylint-disable-next-line NglParseError */
-        //         sh "docker rmi -f \$(docker images -aq)"
-        //     }
-        // }
     }
     post {
         always {

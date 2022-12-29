@@ -21,7 +21,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'aws eks --region us-east-1 update-kubeconfig --name Cap-Pro-Eks-Cluster'
+                sh 'aws eks --region us-east-1 update-kubeconfig --name Hatn5-Eks-Cluster'
                 sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | sudo docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
                 sh 'kubectl create secret docker-registry ecr-secret \
                     --docker-server=523411581086.dkr.ecr.us-east-1.amazonaws.com \
@@ -30,11 +30,11 @@ pipeline {
             }
         }
         stage('Deploy Front End Service') {
-            // when{
-            //     expression {
-            //         return "${BUILD_SERVICES}".contains("frontend-service")
-            //     }
-            // }
+            when{
+                expression {
+                    return "${BUILD_SERVICES}".contains("frontend-service")
+                }
+            }
             steps {
                 sh 'kubectl get nodes -o wide'
                 sh 'kubectl apply -f kubenetes/frontend-service.yml'

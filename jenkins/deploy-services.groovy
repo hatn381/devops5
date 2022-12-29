@@ -9,22 +9,11 @@ pipeline {
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
     }
     parameters{
-        booleanParam(name: 'CREATE_INFAR', defaultValue: false, description: 'Flag to trigger create infrastructure')
         string(name: 'BRANCH_BUILD', defaultValue: 'master', description: 'The branch of git')
         string(name: 'BUILD_SERVICES', defaultValue: 'frontend-service', description: 'List of build services')
     }
     stages {
-        stage('Check CREATE_INFAR') {
-            steps {
-                sh 'echo ${CREATE_INFAR}'
-            }
-        }
         stage('Remote to k8s cluster') {
-            when{
-                expression {
-                    return Boolean.valueOf(CREATE_INFAR)
-                }
-            }
             steps {
                 sh 'aws eks --region us-east-1 update-kubeconfig --name Hatn5-Eks-Cluster'
                 sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | sudo docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"

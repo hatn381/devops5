@@ -28,7 +28,7 @@ pipeline {
                             [$class: 'RelativeTargetDirectory',
                             relativeTargetDir: "${WORKSPACE}"]],
                 submoduleCfg: [],
-                userRemoteConfigs: [[credentialsId: 'hatn5_github_credentials', url: "${GIT_URL}"]]
+                userRemoteConfigs: [[credentialsId: 'hatn5', url: "${GIT_URL}"]]
                 ])
             }
         }

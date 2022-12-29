@@ -40,7 +40,7 @@ pipeline {
         stage('DEPLOY_SERVERS') {
             steps {
                 build(job: 'DEPLOYMENT', parameters: [
-                    booleanParam(name: 'CREATE_INFAR', value: Boolean.valueOf(CREATE_INFARSTRUCTURE)),
+                    booleanParam(name: 'CREATE_INFARSTRUCTURE', value: Boolean.valueOf(CREATE_INFARSTRUCTURE)),
                     string(name: 'BRANCH_BUILD', value: String.valueOf(BRANCH_BUILD)),
                     string(name: 'BUILD_SERVICES', value: String.valueOf(BUILD_SERVICES))
                 ])

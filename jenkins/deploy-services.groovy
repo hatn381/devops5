@@ -15,7 +15,7 @@ pipeline {
     }
     stages {
         stage('Check CREATE_INFAR') {
-            step{
+            steps {
                 sh 'echo ${CREATE_INFAR}'
             }
         }
@@ -32,11 +32,6 @@ pipeline {
                     --docker-server=523411581086.dkr.ecr.us-east-1.amazonaws.com \
                     --docker-username=AWS \
                     --docker-password=$(aws ecr get-login-password)'
-            }
-        }
-        stage('Check BUILD_SERVICES') {
-            step{
-                sh 'echo ${BUILD_SERVICES}'
             }
         }
         stage('Deploy Front End Service') {

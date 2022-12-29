@@ -9,8 +9,8 @@ pipeline {
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
     }
     parameters {
-        string(name: 'BRANCH_BUILD', defaultValue: 'staging', description: 'The branch of git')
-        string(name: 'BUILD_SERVICES', defaultValue: '', description: 'List of build services')
+        string(name: 'BRANCH_BUILD', defaultValue: 'master', description: 'The branch of git')
+        string(name: 'BUILD_SERVICES', defaultValue: 'frontend-service', description: 'List of build services')
     }
     stages{
         stage('Checkout'){

@@ -29,6 +29,11 @@ pipeline {
                     --docker-password=$(aws ecr get-login-password)'
             }
         }
+        stage('Check BUILD_SERVICES') {
+            step{
+                sh 'echo ${BUILD_SERVICES}'
+            }
+        }
         stage('Deploy Front End Service') {
             when{
                 expression {

@@ -3,9 +3,9 @@ pipeline {
     environment {
         GIT_URL = 'https://github.com/hatn381/devops5.git'
         WORKSPACE = 'SOURCE_CODE'
-        AWS_ACCOUNT_ID="523411581086"
-        AWS_DEFAULT_REGION="us-east-1" 
-        IMAGE_TAG="latest"
+        AWS_ACCOUNT_ID = "523411581086"
+        AWS_DEFAULT_REGION = "us-east-1" 
+        IMAGE_TAG = "latest"
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
     }
     parameters {
@@ -34,8 +34,9 @@ pipeline {
         }
         stage('Login into AWS ECR') {
             steps {
+                sh "pwd"
                 sh "aws configure list"
-                sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"  
+                sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | sudo docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"  
             }
         }
         stage('Build Cloud Config Server'){
@@ -49,11 +50,11 @@ pipeline {
             }
             steps{
                 // Build docker image
-                sh "cd ${WORKSPACE} && docker build -t ${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG} ."
+                sh "cd ${WORKSPACE} && sudo docker build -t ${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG} ."
                 // Tag docker image
-                sh "docker tag ${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG} ${REPOSITORY_URI}/${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG}"
+                sh "sudo docker tag ${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG} ${REPOSITORY_URI}/${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG}"
                 // Push image to ECR repository
-                sh "docker push ${REPOSITORY_URI}/${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG}"
+                sh "sudo docker push ${REPOSITORY_URI}/${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG}"
             }
         }
         // stage('Delete docker images') {

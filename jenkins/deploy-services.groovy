@@ -14,6 +14,11 @@ pipeline {
         string(name: 'BUILD_SERVICES', defaultValue: 'frontend-service', description: 'List of build services')
     }
     stages {
+        stage('Check BUILD_SERVICES') {
+            step{
+                sh 'echo ${CREATE_INFAR}'
+            }
+        }
         stage('Remote to k8s cluster') {
             when{
                 expression {

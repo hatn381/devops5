@@ -15,11 +15,11 @@ pipeline {
     }
     stages {
         stage('Remote to k8s cluster') {
-            when{
-                expression {
-                    return Boolean.valueOf(CREATE_INFAR)
-                }
-            }
+            // when{
+            //     expression {
+            //         return Boolean.valueOf(CREATE_INFAR)
+            //     }
+            // }
             steps {
                 sh 'aws eks --region us-east-1 update-kubeconfig --name Cap-Pro-Eks-Cluster'
                 sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | sudo docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
@@ -30,11 +30,11 @@ pipeline {
             }
         }
         stage('Deploy Front End Service') {
-            when{
-                expression {
-                    return "${BUILD_SERVICES}".contains("frontend-service")
-                }
-            }
+            // when{
+            //     expression {
+            //         return "${BUILD_SERVICES}".contains("frontend-service")
+            //     }
+            // }
             steps {
                 sh 'kubectl get nodes -o wide'
                 sh 'kubectl apply -f kubenetes/frontend-service.yml'

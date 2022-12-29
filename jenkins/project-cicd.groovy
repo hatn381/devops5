@@ -32,8 +32,8 @@ pipeline {
                 }
             }
             steps {
-                sh 'cd cloudformation && aws cloudformation update-stack --stack-name hatn5-project5-stack --template-body file://infrastructure.yml  --parameters file://parameters.json --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1'
-                sh 'aws cloudformation wait stack-create-complete --region us-east-1 --stack-name hatn5-project5-stack'
+                sh 'cd cloudformation && aws cloudformation create-stack --stack-name hatn5-project5-stack1 --template-body file://infrastructure.yml  --parameters file://parameters.json --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1'
+                sh 'aws cloudformation wait stack-create-complete --region us-east-1 --stack-name hatn5-project5-stack1'
             }
         }
 

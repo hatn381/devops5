@@ -22,8 +22,9 @@ pipeline {
             }
             steps {
                 sh 'aws eks --region us-east-1 update-kubeconfig --name Cap-Pro-Eks-Cluster'
+                sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | sudo docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
                 sh 'kubectl create secret docker-registry ecr-secret \
-                    --docker-server=248155485793.dkr.ecr.us-east-1.amazonaws.com \
+                    --docker-server=523411581086.dkr.ecr.us-east-1.amazonaws.com \
                     --docker-username=AWS \
                     --docker-password=$(aws ecr get-login-password)'
             }

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend-app
-          image: <Image>
+          image: 523411581086.dkr.ecr.us-east-1.amazonaws.com/frontend-repo:master_latest
           imagePullPolicy: Always
           resources:
             limits:
@@ -23,7 +23,7 @@ spec:
           ports:
             - containerPort: 3000
       imagePullSecrets:
-        - name: ecr-secrets
+        - name: ecr-secret
 
 ---
 apiVersion: v1
@@ -32,9 +32,9 @@ metadata:
   name: frontend-svc
 spec:
   type: LoadBalancer
-  selector:
-    app: frontend-app
   ports:
     - port: 80
       targetPort: 3000
       protocol: TCP
+  selector:
+    app: frontend-app

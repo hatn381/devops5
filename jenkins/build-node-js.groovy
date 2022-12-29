@@ -8,44 +8,56 @@ pipeline {
         IMAGE_TAG = "latest"
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
     }
-    parameters{
-        booleanParam(name: 'CREATE_INFAR', defaultValue: false, description: 'Flag to trigger create infrastructure')
+    parameters {
         string(name: 'BRANCH_BUILD', defaultValue: 'staging', description: 'The branch of git')
         string(name: 'BUILD_SERVICES', defaultValue: '', description: 'List of build services')
     }
-    stages {
-        stage('Remote to k8s cluster') {
-            when{
-                expression {
-                    return Boolean.valueOf(CREATE_INFAR)
-                }
-            }
-            steps {
-                sh 'aws eks --region us-east-1 update-kubeconfig --name Cap-Pro-Eks-Cluster'
-                sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | sudo docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
-                sh 'kubectl create secret docker-registry ecr-secret \
-                    --docker-server=523411581086.dkr.ecr.us-east-1.amazonaws.com \
-                    --docker-username=AWS \
-                    --docker-password=$(aws ecr get-login-password)'
+    stages{
+        stage('Checkout'){
+            steps{
+                checkout([   $class: 'GitSCM',
+                branches: [[name: "${BRANCH_BUILD}"]],
+                doGenerateSubmoduleConfigurations: false,
+                extensions: [[$class: 'CleanBeforeCheckout'],
+                            [$class: 'SubmoduleOption',
+                            disableSubmodules: false,
+                            parentCredentials: true,
+                            recursiveSubmodules: true,
+                            reference: '',
+                            trackingSubmodules: false],
+                            [$class: 'RelativeTargetDirectory',
+                            relativeTargetDir: "${WORKSPACE}"]],
+                submoduleCfg: [],
+                userRemoteConfigs: [[credentialsId: 'hatn5', url: "${GIT_URL}"]]
+                ])
             }
         }
-        stage('Deploy Front End Service') {
+        stage('Login into AWS ECR') {
+            steps {
+                sh "pwd"
+                sh "aws configure list"
+                sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | sudo docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"  
+            }
+        }
+        stage('Build Cloud Config Server'){
             when{
                 expression {
                     return "${BUILD_SERVICES}".contains("frontend-service")
                 }
             }
-            steps {
-                sh 'kubectl get nodes -o wide'
-                sh 'kubectl apply -f kubenetes/frontend-service.yml'
+            environment {
+                IMAGE_REPO_NAME="frontend-repo"
+            }
+            steps{
+                // Build docker image
+                sh "cd ${WORKSPACE} && sudo docker build -t ${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG} ."
+                // Tag docker image
+                sh "sudo docker tag ${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG} ${REPOSITORY_URI}/${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG}"
+                // Push image to ECR repository
+                sh "sudo docker push ${REPOSITORY_URI}/${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG}"
             }
         }
-        stage('Deployment status') {
-            steps {
-                sh 'kubectl get nodes'
-                sh 'kubectl get pods'
-            }
-        }
+
     }
     post {
         always {

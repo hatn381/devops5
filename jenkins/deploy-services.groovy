@@ -14,7 +14,7 @@ pipeline {
         string(name: 'BUILD_SERVICES', defaultValue: 'frontend-service', description: 'List of build services')
     }
     stages {
-        stage('Check BUILD_SERVICES') {
+        stage('Check CREATE_INFAR') {
             step{
                 sh 'echo ${CREATE_INFAR}'
             }

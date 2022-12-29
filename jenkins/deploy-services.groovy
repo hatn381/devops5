@@ -10,8 +10,8 @@ pipeline {
     }
     parameters{
         booleanParam(name: 'CREATE_INFAR', defaultValue: false, description: 'Flag to trigger create infrastructure')
-        string(name: 'BRANCH_BUILD', defaultValue: 'staging', description: 'The branch of git')
-        string(name: 'BUILD_SERVICES', defaultValue: '', description: 'List of build services')
+        string(name: 'BRANCH_BUILD', defaultValue: 'master', description: 'The branch of git')
+        string(name: 'BUILD_SERVICES', defaultValue: 'frontend-service', description: 'List of build services')
     }
     stages {
         stage('Remote to k8s cluster') {

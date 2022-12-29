@@ -15,11 +15,11 @@ pipeline {
     }
     stages {
         stage('Remote to k8s cluster') {
-            // when{
-            //     expression {
-            //         return Boolean.valueOf(CREATE_INFAR)
-            //     }
-            // }
+            when{
+                expression {
+                    return Boolean.valueOf(CREATE_INFAR)
+                }
+            }
             steps {
                 sh 'aws eks --region us-east-1 update-kubeconfig --name Cap-Pro-Eks-Cluster'
                 sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | sudo docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"

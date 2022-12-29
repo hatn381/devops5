@@ -13,17 +13,17 @@ spec:
         app: frontend-app
     spec:
       containers:
-      - name: frontend-app
-        image: <Image>
-        imagePullPolicy: Always
-        resources:
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
-        ports:
-        - containerPort: 3000
+        - name: frontend-app
+          image: <Image>
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: '128Mi'
+              cpu: '500m'
+          ports:
+            - containerPort: 3000
       imagePullSecrets:
-        - ecr-secrets
+        - name: ecr-secrets
 
 ---
 apiVersion: v1
@@ -35,6 +35,6 @@ spec:
   selector:
     app: frontend-app
   ports:
-  - port: 80
-    targetPort: 3000
-
+    - port: 80
+      targetPort: 3000
+      protocol: TCP

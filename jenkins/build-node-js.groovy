@@ -51,6 +51,10 @@ pipeline {
             steps{
                 // Build docker image
                 sh "cd ${WORKSPACE} && sudo docker build -t ${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG} ."
+                // check container
+                sh "docker ps -a"
+                //check docker log
+                sh "docker logs"
                 // Tag docker image
                 sh "sudo docker tag ${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG} ${REPOSITORY_URI}/${IMAGE_REPO_NAME}:${BRANCH_BUILD}_${IMAGE_TAG}"
                 // Push image to ECR repository

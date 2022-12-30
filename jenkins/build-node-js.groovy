@@ -46,7 +46,7 @@ pipeline {
                 }
             }
             environment {
-                IMAGE_REPO_NAME="frontend-repo"
+                IMAGE_REPO_NAME="frontend_repo"
             }
             steps{
                 // Build docker image

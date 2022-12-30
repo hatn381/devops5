@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend-app
-          image: 523411581086.dkr.ecr.us-east-1.amazonaws.com/frontend-repo:master_latest
+          image: 523411581086.dkr.ecr.us-east-1.amazonaws.com/frontend_repo:master_latest
           imagePullPolicy: Always
           resources:
             limits:

@@ -6,4 +6,4 @@ services:
       context: .
     container_name: frontend
     ports:
-      - '3333:3333' # map 80 in container => 3000 in local
+      - '3000:80' # map 80 in container => 3000 in local

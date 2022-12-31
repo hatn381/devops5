@@ -21,7 +21,7 @@ spec:
               memory: '128Mi'
               cpu: '500m'
           ports:
-            - containerPort: 3333
+            - containerPort: 80
       imagePullSecrets:
         - name: ecr-secret
 
@@ -33,8 +33,8 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 3333
-      targetPort: 3333
+    - port: 80
+      targetPort: 3000
       protocol: TCP
   selector:
     app: frontend-app
